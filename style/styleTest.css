@@ -42,3 +42,7 @@ li{font-size: 12px;}
 .input_shrink{
   width: 80%;
 }
+
+ul {
+  list-style-type: none;
+}
