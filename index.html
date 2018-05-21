@@ -18,7 +18,7 @@
     <div class="row">
       <div class="col-sm-3 no-float dark">
         <input type="text" placeholder="Search.." class='input_shrink' data-bind="textInput: query, event: {keyup: filterPlaces}">
-        <ul data-bind="foreach:placeList">
+        <ul data-bind="foreach:placeList" class="narrow">
             <li>
                 <!-- I just want to show off and dont like it anymore-->
                 <!--<span data-bind="text: (1 + $index())"> </span>#-->
@@ -46,8 +46,14 @@
   <!-- Latest compiled and minified JavaScript version of bootstrap-->
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
     crossorigin="anonymous"></script>
-  <script async defer src="https://maps.googleapis.com/maps/api/js?libraries=geometry,drawing&key=AIzaSyDIawTE_HUDqGNIoGhtrlheiBvQ75vIYEw&v=3&callback=initMap"></script>
-  
+  <!-- wrong API no places 
+    <script async defer src="https://maps.googleapis.com/maps/api/js?libraries=geometry,drawing&key=AIzaSyDIawTE_HUDqGNIoGhtrlheiBvQ75vIYEw&v=3&callback=initMap"></script>
+  -->
+  <script async defer
+  src=
+  "https://maps.googleapis.com/maps/api/js?libraries=places,geometry,drawing&key=AIzaSyDIawTE_HUDqGNIoGhtrlheiBvQ75vIYEw&v=3&callback=initMap">
+</script>
+
 </body>
 
 </html>

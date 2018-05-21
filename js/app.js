@@ -7,17 +7,24 @@ var initialPlaces = [
 
 var map;
 var markers = [];
+// everything is better with cats
+//var icon;
 
 function initMap() {
-  // Constructor creates a new map - only center and zoom are required.
-  map = new google.maps.Map(document.getElementById('map'), {
-    center: { lat: 48.7758459, lng: 9.182932100000016 },
-    zoom: 13
-  });
+    // Constructor creates a new map - only center and zoom are required.
+    map = new google.maps.Map(document.getElementById('map'), {
+        center: { lat: 48.7758459, lng: 9.182932100000016 },
+        zoom: 13
+    });
+    /*
+    icon = {
+        url: "img/cat.jpg", // url
+        scaledSize: new google.maps.Size(50, 50), // scaled size
+        origin: new google.maps.Point(0, 0), // origin
+        anchor: new google.maps.Point(0, 0) // anchor
+    };*/
 
-  console.log("not yet done");
-  ko.applyBindings(octopus);
-  console.log("done");
+    ko.applyBindings(octopus);
 }
 
 
@@ -29,11 +36,12 @@ var octopus = function () {
 
     var bounds = new google.maps.LatLngBounds();
     initialPlaces.forEach(function (placeLocation) {
-        
+
         var marker = new google.maps.Marker({
             position: placeLocation.position,
             title: placeLocation.name,
-            animation: google.maps.Animation.DROP
+            animation: google.maps.Animation.DROP,
+            //icon: icon // the world is not ready for cat
         });
         placeLocation.marker = marker;
         marker.setMap(map);
@@ -41,22 +49,22 @@ var octopus = function () {
         marker.addListener('click', function () {
             populateInfoWindow(this, new google.maps.InfoWindow());
         });
-        
+
         markers.push(placeLocation);
         self.placeList.push(placeLocation);
 
         bounds.extend(placeLocation.position);
-        
+
     });
     map.fitBounds(bounds);
     // everytime query/placeList changes, this gets computed again
     self.filterPlaces = function () {
-        
+
         for (var i = 0; i < markers.length; i++) {
             var marker = markers[i];
-            
+
             if (marker.name.toLowerCase().indexOf(self.query().toLowerCase()) > -1) {
-                if (self.placeList.indexOf(marker)  < 0) {
+                if (self.placeList.indexOf(marker) < 0) {
                     self.placeList.push(marker);
                     marker.marker.setMap(map);
                 }

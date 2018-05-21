@@ -30,13 +30,13 @@ footer{
   width: 80%;
 }
 
-ul {
+.narrow {
   list-style-type: none;
   padding: 0;
 }
 
 .dark{
-  background: rgb(43, 42, 42);
+  background-color: rgb(43, 42, 42);
   color: white;
 }
 #map {
