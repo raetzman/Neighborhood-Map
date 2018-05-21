@@ -1,7 +1,4 @@
 
-#map {
-  height: 90%;
-}
 
 html,body,.container {
   height:100%;
@@ -31,4 +28,17 @@ footer{
 
 .input_shrink{
   width: 80%;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.dark{
+  background: rgb(43, 42, 42);
+  color: white;
+}
+#map {
+  height: 90%;
 }

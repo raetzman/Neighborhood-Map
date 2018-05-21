@@ -5,62 +5,67 @@ var initialPlaces = [
     { name: 'Bella Napoli Feuerbach', position: { lat: 48.810060, lng: 9.163198 } }
 ];
 
+var map;
+var markers = [];
+
+function initMap() {
+  // Constructor creates a new map - only center and zoom are required.
+  map = new google.maps.Map(document.getElementById('map'), {
+    center: { lat: 48.7758459, lng: 9.182932100000016 },
+    zoom: 13
+  });
+
+  console.log("not yet done");
+  ko.applyBindings(octopus);
+  console.log("done");
+}
+
+
+
 var octopus = function () {
     var self = this;
     self.placeList = ko.observableArray([]);
     self.query = ko.observable('');
 
+    var bounds = new google.maps.LatLngBounds();
     initialPlaces.forEach(function (placeLocation) {
-        self.placeList.push(placeLocation);
-    });
-    self.mapmarkers=[];
-    self.currentData;
-    // This function will loop through the markers array and display them all
-    // if they are not there yet.
-    self.showListings = function () {
-
-
-        var markers = self.currentData;// self.placeList().filter(place => place.name.toLowerCase().indexOf(self.query().toLowerCase()) > -1);;
         
-        
-        
-        markers.forEach(candidate => {
-            
-            if (!candidate.marker) {
-                // Extend the boundaries of the map for each marker and display the marker
-                var bounds = new google.maps.LatLngBounds();
-                for (var i = 0; i < markers.length; i++) {
+        var marker = new google.maps.Marker({
+            position: placeLocation.position,
+            title: placeLocation.name,
+            animation: google.maps.Animation.DROP
+        });
+        placeLocation.marker = marker;
+        marker.setMap(map);
 
-                    var marker = new google.maps.Marker({
-                        position: markers[i].position,
-                        title: markers[i].name,
-                        animation: google.maps.Animation.DROP,
-                        id: i + 1
-                    });
-                    candidate.marker = marker;
-                    mapmarkers.push(candidate);
-                    marker.setMap(map);
-                    marker.addListener('click', function () {
-                        populateInfoWindow(this, new google.maps.InfoWindow());
-                    });
-                    bounds.extend(markers[i].position);
-                }
-                map.fitBounds(bounds);
-            }
-                
-            
-            
-                
-            
+        marker.addListener('click', function () {
+            populateInfoWindow(this, new google.maps.InfoWindow());
         });
         
-    }
-    // everytime query/placeList changes, this gets computed again
-    self.filteredPlaces = ko.computed(function () {
-        self.currentData = self.placeList().filter(place => place.name.toLowerCase().indexOf(self.query().toLowerCase()) > -1);
-        self.showListings();
-        return currentData;
+        markers.push(placeLocation);
+        self.placeList.push(placeLocation);
+
+        bounds.extend(placeLocation.position);
+        
     });
+    map.fitBounds(bounds);
+    // everytime query/placeList changes, this gets computed again
+    self.filterPlaces = function () {
+        
+        for (var i = 0; i < markers.length; i++) {
+            var marker = markers[i];
+            
+            if (marker.name.toLowerCase().indexOf(self.query().toLowerCase()) > -1) {
+                if (self.placeList.indexOf(marker)  < 0) {
+                    self.placeList.push(marker);
+                    marker.marker.setMap(map);
+                }
+            } else {
+                marker.marker.setMap(null);
+                self.placeList.remove(marker);
+            }
+        }
+    };
 }
 
 

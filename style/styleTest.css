@@ -1,7 +1,4 @@
 
-#map {
-  height: 90%;
-}
 
 html,body,.container {
   height:100%;
@@ -45,4 +42,13 @@ li{font-size: 12px;}
 
 ul {
   list-style-type: none;
+  padding: 0;
+}
+
+.dark{
+  background: rgb(43, 42, 42);
+  color: white;
+}
+#map {
+  height: 90%;
 }

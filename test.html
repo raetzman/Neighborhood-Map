@@ -16,24 +16,24 @@
   </header>
   <div class="container">
     <div class="row">
-      <div class="col-sm-3 no-float">
-        <input type="text" placeholder="Search.." class='input_shrink' data-bind="textInput: query, valueUpdate: 'keyup'">
-        <ul data-bind="foreach:filteredPlaces">
+      <div class="col-sm-3 no-float dark">
+        <input type="text" placeholder="Search.." class='input_shrink' data-bind="textInput: query, event: {keyup: filterPlaces}">
+        <ul data-bind="foreach:placeList">
             <li>
-                <!-- I just want to show off and show my favorite places-->
-                <span data-bind="text: (1 + $index())"> </span>#
+                <!-- I just want to show off and dont like it anymore-->
+                <!--<span data-bind="text: (1 + $index())"> </span>#-->
                 <!-- databinding to name better in strong-->
                 <strong data-bind="text: name"> </strong>
             </li>
         </ul>
       </div>
-      <div class="col-sm-9 no-float">
+      <div class="col-sm-9 no-float dark">
         <h2>a Restaurant Guide</h2>
         <div id="map"></div>
       </div>
     </div>
     <div class="row">
-      <div class="col-sm-12 no-float">
+      <div class="col-sm-12 no-float dark">
         <footer>Copyright &copy; W3Schools.com &copy; Udacity &copy; Rätzke</footer>
       </div>
     </div>
