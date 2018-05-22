@@ -104,7 +104,7 @@ function populateInfoWindow(marker, infowindow) {
                 var nearStreetViewLocation = data.location.latLng;
                 var heading = google.maps.geometry.spherical.computeHeading(
                     nearStreetViewLocation, marker.position);
-                infowindow.setContent('<div>' + marker.title + '</div><div id="pano"></div>');
+                infowindow.setContent('<div><strong>' + marker.title + '</strong></div><div id="pano"></div>');
                 var panoramaOptions = {
                     position: nearStreetViewLocation,
                     pov: {
