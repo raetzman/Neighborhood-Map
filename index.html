@@ -19,7 +19,7 @@
       <div class="col-sm-3 no-float dark">
         <input type="text" placeholder="Search.." class='input_shrink' data-bind="textInput: query, event: {keyup: filterPlaces}">
         <ul data-bind="foreach:placeList" class="narrow">
-            <li>
+            <li data-bind="click: showInfoWindow">
                 <!-- I just want to show off and dont like it anymore-->
                 <!--<span data-bind="text: (1 + $index())"> </span>#-->
                 <!-- databinding to name better in strong-->

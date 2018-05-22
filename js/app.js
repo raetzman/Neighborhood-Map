@@ -74,6 +74,10 @@ var octopus = function () {
             }
         }
     };
+
+    self.showInfoWindow = function (data, event){
+        populateInfoWindow(data.marker, new google.maps.InfoWindow());
+    }
 }
 
 
