@@ -3,16 +3,18 @@ var initialPlaces = [
     { name: 'Cafe Kraft', position: { lat: 48.719280, lng: 9.128380 }, comment: "a sport place to got boulder, which also sells coffee" },
     { name: 'Schwoabe Töpfle', position: { lat: 48.717440, lng: 9.144160 }, comment: "playing Soccer or eat al kinds of swabian delicatess" },
 
-    { name: 'Udo Snack', position: { lat: 48.7761642, lng: 9.1740999 },  comment: "traditional street food style burger since 1849" },
-    { name: 'Fluxus', position: { lat: 48.77543, lng: 9.1728 },  comment: "probably a tax fraud, but nice atmosphere" },
-    { name: 'I LOVE SUSHI', position: { lat: 48.7784709, lng: 9.1564214 },  comment: "I know people how love Sushi so much" },
+    { name: 'Udo Snack', position: { lat: 48.7761642, lng: 9.1740999 }, comment: "traditional street food style burger since 1849" },
+    { name: 'Fluxus', position: { lat: 48.77543, lng: 9.1728 }, comment: "probably a tax fraud, but nice atmosphere" },
+    { name: 'I LOVE SUSHI', position: { lat: 48.7784709, lng: 9.1564214 }, comment: "I know people how love Sushi so much" },
 
-    { name: 'Bella Napoli Feuerbach', position: { lat: 48.810060, lng: 9.163198 },  comment: "the italian restaurant to visit in stuttgart" }
+    { name: 'Bella Napoli Feuerbach', position: { lat: 48.810060, lng: 9.163198 }, comment: "the italian restaurant to visit in stuttgart" }
 ];
-
+var FOURSQRE_CLIENT_ID = 'QTLWAELP5HATQ5S1P3OSVKXBXLJZ0UCGI1QXFN35GJFUUXLM';
+var FOURSQRE_CLIENT_SECRET = 'UAMIKPK3GQO5KXGQBE5YIPKSZAKC5WOZN32WJMUZGYXJGRDU';
 var map;
 var markers = [];
-var theInfowindow;
+var largeInfowindow;
+
 // everything is better with cats
 //var icon;
 
@@ -29,7 +31,7 @@ function initMap() {
         origin: new google.maps.Point(0, 0), // origin
         anchor: new google.maps.Point(0, 0) // anchor
     };*/
-    theInfowindow = new google.maps.InfoWindow();
+    largeInfowindow = new google.maps.InfoWindow();
     ko.applyBindings(octopus);
 }
 
@@ -54,7 +56,7 @@ var octopus = function () {
         marker.setMap(map);
 
         marker.addListener('click', function () {
-            populateInfoWindow(this, theInfowindow);
+            populateInfoWindow(this, largeInfowindow);
         });
 
         markers.push(placeLocation);
@@ -81,9 +83,9 @@ var octopus = function () {
             }
         }
     };
-    
-    self.showInfoWindow = function (data, event){
-        populateInfoWindow(data.marker, theInfowindow);
+
+    self.showInfoWindow = function (data, event) {
+        populateInfoWindow(data.marker, largeInfowindow);
     }
 }
 
@@ -101,6 +103,10 @@ function populateInfoWindow(marker, infowindow) {
         infowindow.addListener('closeclick', function () {
             infowindow.marker = null;
         });
+
+
+        requestFourSquare(marker);
+
         var streetViewService = new google.maps.StreetViewService();
         var radius = 50;
         // In case the status is OK, which means the pano was found, compute the
@@ -126,11 +132,36 @@ function populateInfoWindow(marker, infowindow) {
                     '<div>No Street View Found</div>');
             }
         }
-        console.log(infowindow);
+
         // Use streetview service to get the closest streetview image within
         // 50 meters of the markers position
         streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
         // Open the infowindow on the correct marker.
         infowindow.open(map, marker);
+    }
+
+    
+    function requestFourSquare(marker) {
+        var fsObj = [];
+        console.log(marker);
+        var url = 'https://api.foursquare.com/v2/venues/search?ll=' + marker.position.lat + ',' + 
+        marker.position.lng + '&query=' + "restaurant" + '&radius=' + 300 + 
+        '&intent=browse&client_id=' + FOURSQRE_CLIENT_ID + '&client_secret=' + FOURSQRE_CLIENT_SECRET + '&v=20120304';
+        $.getJSON(url, {}, function (data) {
+            venues = data['response']['groups'][0]['items'];
+            for (var i = 0; i < venues.length; i++) {
+                var fsRes = {
+                    'Id': venues[i]['venue']['id'],
+                    'Name': venues[i]['venue']['name'],
+                    'Latitude': venues[i]['venue']['location']['lat'],
+                    'Longitude': venues[i]['venue']['location']['lng'],
+                    'Type': type,
+                    'Vicinity': venues[i]['venue']['location']['address'],
+                    'Reference': "Foursquare"
+                };
+                fsObj.push(fsRes);
+            }
+            console.log(fsObj);
+        });
     }
 }

@@ -2,6 +2,7 @@
 <html>
 
 <head>
+  <meta charset="utf-8" />
   <script type='text/javascript' src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js"></script>
   <link rel="stylesheet" type="text/css" href="style/style.css">
   <!-- imoprt bootstrap css-->
@@ -16,28 +17,22 @@
   </header>
   <div class="container">
     <div class="row">
-      <div class="col-sm-3 no-float dark">
+      <div class="col-sm-3 no-float">
         <input type="text" placeholder="Search.." class='input_shrink' data-bind="textInput: query, event: {keyup: filterPlaces}">
-        <ul data-bind="foreach:placeList" class="narrow">
-            <li data-bind="click: showInfoWindow" >
-                <!-- I just want to show off and dont like it anymore-->
-                <!--<span data-bind="text: (1 + $index())"> </span>#-->
-                <!-- databinding to name better in strong-->
-                <strong data-bind="text: name"> </strong>
-            </li>
+        <ul data-bind="foreach:placeList">
+          <li data-bind="click: showInfoWindow">
+            <!-- I just want to show off and dont like it anymore-->
+            <!--<span data-bind="text: (1 + $index())"> </span>#-->
+            <!-- databinding to name better in strong-->
+            <strong data-bind="text: name"> </strong>
+          </li>
         </ul>
       </div>
-      <div class="col-sm-9 no-float dark">
+      <div class="col-sm-9 no-float">
         <h2>Mauntzi's Restaurant Guide</h2>
         <div id="map"></div>
       </div>
     </div>
-    <div class="row">
-      <div class="col-sm-12 no-float dark">
-        <footer>Copyright &copy; W3Schools.com &copy; Udacity &copy; Rätzke</footer>
-      </div>
-    </div>
-
   </div>
 
   <script src="js/app.js"></script>
@@ -46,13 +41,9 @@
   <!-- Latest compiled and minified JavaScript version of bootstrap-->
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
     crossorigin="anonymous"></script>
-  <!-- wrong API no places 
-    <script async defer src="https://maps.googleapis.com/maps/api/js?libraries=geometry,drawing&key=AIzaSyDIawTE_HUDqGNIoGhtrlheiBvQ75vIYEw&v=3&callback=initMap"></script>
-  -->
-  <script async defer
-  src=
-  "https://maps.googleapis.com/maps/api/js?libraries=places,geometry,drawing&key=AIzaSyDIawTE_HUDqGNIoGhtrlheiBvQ75vIYEw&v=3&callback=initMap">
-</script>
+
+  <script async defer src="https://maps.googleapis.com/maps/api/js?libraries=places,geometry,drawing&key=AIzaSyDIawTE_HUDqGNIoGhtrlheiBvQ75vIYEw&v=3&callback=initMap">
+  </script>
 
 </body>
 
