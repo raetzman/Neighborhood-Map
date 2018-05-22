@@ -32,7 +32,11 @@ footer{
 
 .narrow {
   list-style-type: none;
-  padding: 0;
+  padding: 0;  
+}
+
+li{
+  padding: 1em 0em 0.5em 0em;  
 }
 
 .dark{

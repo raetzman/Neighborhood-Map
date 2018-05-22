@@ -1,12 +1,18 @@
 
 var initialPlaces = [
-    { name: 'Cafe Kraft', position: { lat: 48.719280, lng: 9.128380 } },
-    { name: 'Schwoabetöpfle', position: { lat: 48.717440, lng: 9.144160 } },
-    { name: 'Bella Napoli Feuerbach', position: { lat: 48.810060, lng: 9.163198 } }
+    { name: 'Cafe Kraft', position: { lat: 48.719280, lng: 9.128380 }, comment: "a sport place to got boulder, which also sells coffee" },
+    { name: 'Schwoabe Töpfle', position: { lat: 48.717440, lng: 9.144160 }, comment: "playing Soccer or eat al kinds of swabian delicatess" },
+
+    { name: 'Udo Snack', position: { lat: 48.7761642, lng: 9.1740999 },  comment: "traditional street food style burger since 1849" },
+    { name: 'Fluxus', position: { lat: 48.77543, lng: 9.1728 },  comment: "probably a tax fraud, but nice atmosphere" },
+    { name: 'I LOVE SUSHI', position: { lat: 48.7784709, lng: 9.1564214 },  comment: "I know people how love Sushi so much" },
+
+    { name: 'Bella Napoli Feuerbach', position: { lat: 48.810060, lng: 9.163198 },  comment: "the italian restaurant to visit in stuttgart" }
 ];
 
 var map;
 var markers = [];
+var theInfowindow;
 // everything is better with cats
 //var icon;
 
@@ -23,7 +29,7 @@ function initMap() {
         origin: new google.maps.Point(0, 0), // origin
         anchor: new google.maps.Point(0, 0) // anchor
     };*/
-
+    theInfowindow = new google.maps.InfoWindow();
     ko.applyBindings(octopus);
 }
 
@@ -41,13 +47,14 @@ var octopus = function () {
             position: placeLocation.position,
             title: placeLocation.name,
             animation: google.maps.Animation.DROP,
+            comment: placeLocation.comment
             //icon: icon // the world is not ready for cat
         });
         placeLocation.marker = marker;
         marker.setMap(map);
 
         marker.addListener('click', function () {
-            populateInfoWindow(this, new google.maps.InfoWindow());
+            populateInfoWindow(this, theInfowindow);
         });
 
         markers.push(placeLocation);
@@ -74,9 +81,9 @@ var octopus = function () {
             }
         }
     };
-
+    
     self.showInfoWindow = function (data, event){
-        populateInfoWindow(data.marker, new google.maps.InfoWindow());
+        populateInfoWindow(data.marker, theInfowindow);
     }
 }
 
@@ -104,7 +111,7 @@ function populateInfoWindow(marker, infowindow) {
                 var nearStreetViewLocation = data.location.latLng;
                 var heading = google.maps.geometry.spherical.computeHeading(
                     nearStreetViewLocation, marker.position);
-                infowindow.setContent('<div><strong>' + marker.title + '</strong></div><div id="pano"></div>');
+                infowindow.setContent('<div><strong>' + marker.title + '</strong></div><hr><div>' + marker.comment + '</div><hr><div id="pano"></div>');
                 var panoramaOptions = {
                     position: nearStreetViewLocation,
                     pov: {
