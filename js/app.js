@@ -53,6 +53,7 @@ var octopus = function () {
             //icon: icon // the world is not ready for cat
         });
         placeLocation.marker = marker;
+        marker.placeLocation = placeLocation;
         marker.setMap(map);
 
         marker.addListener('click', function () {
@@ -143,11 +144,13 @@ function populateInfoWindow(marker, infowindow) {
     
     function requestFourSquare(marker) {
         var fsObj = [];
-        console.log(marker);
-        var url = 'https://api.foursquare.com/v2/venues/search?ll=' + marker.position.lat + ',' + 
-        marker.position.lng + '&query=' + "restaurant" + '&radius=' + 300 + 
-        '&intent=browse&client_id=' + FOURSQRE_CLIENT_ID + '&client_secret=' + FOURSQRE_CLIENT_SECRET + '&v=20120304';
+        
+        var url = 'https://api.foursquare.com/v2/venues/search?ll=' + marker.placeLocation.position.lat + "," +
+        marker.placeLocation.position.lng + '&query=' + marker.title + '&radius=' + 300 + 
+        '&intent=browse&client_id=' + FOURSQRE_CLIENT_ID + '&client_secret=' + FOURSQRE_CLIENT_SECRET + '&v=20120609';
+        console.log(url);
         $.getJSON(url, {}, function (data) {
+            console.log(data);
             venues = data['response']['groups'][0]['items'];
             for (var i = 0; i < venues.length; i++) {
                 var fsRes = {
