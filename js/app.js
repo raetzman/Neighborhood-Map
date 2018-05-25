@@ -1,13 +1,13 @@
 
 var initialPlaces = [
-    { name: 'Cafe Kraft', position: { lat: 48.719280, lng: 9.128380 }, comment: "a sport place to got boulder, which also sells coffee" },
-    { name: 'Schwoabe Töpfle', position: { lat: 48.717440, lng: 9.144160 }, comment: "playing Soccer or eat al kinds of swabian delicatess" },
+    { name: 'Cafe Kraft', position: { lat: 48.719280, lng: 9.128380 }, comment: "a sport place to got boulder, which also sells coffee", id:'4bcb01643740b71360a36165' },
+    { name: 'Schwabengarten', position: { lat: 48.70136, lng: 9.141701 }, comment: "playing Soccer or eat al kinds of swabian delicatess", id:'4bcb01643740b71360a36165' },
 
     { name: 'Udo Snack', position: { lat: 48.7761642, lng: 9.1740999 }, comment: "traditional street food style burger since 1849" },
     { name: 'Fluxus', position: { lat: 48.77543, lng: 9.1728 }, comment: "probably a tax fraud, but nice atmosphere" },
     { name: 'I LOVE SUSHI', position: { lat: 48.7784709, lng: 9.1564214 }, comment: "I know people how love Sushi so much" },
 
-    { name: 'Bella Napoli Feuerbach', position: { lat: 48.810060, lng: 9.163198 }, comment: "the italian restaurant to visit in stuttgart" }
+    { name: 'Bella Napoli Feuerbach', position: { lat: 48.810060, lng: 9.163198 }, comment: "the italian restaurant to visit in stuttgart", id:'4b842c92f964a520832531e3' }
 ];
 var FOURSQRE_CLIENT_ID = 'QTLWAELP5HATQ5S1P3OSVKXBXLJZ0UCGI1QXFN35GJFUUXLM';
 var FOURSQRE_CLIENT_SECRET = 'UAMIKPK3GQO5KXGQBE5YIPKSZAKC5WOZN32WJMUZGYXJGRDU';
@@ -56,7 +56,7 @@ var octopus = function () {
         marker.setMap(map);
 
         marker.addListener('click', function () {
-            populateInfoWindow(this, largeInfowindow);
+            populateInfoWindow(this, largeInfowindow, placeLocation);
         });
 
         markers.push(placeLocation);
@@ -93,7 +93,7 @@ var octopus = function () {
 // This function populates the infowindow when the marker is clicked. We'll only allow
 // one infowindow which will open at the marker that is clicked, and populate based
 // on that markers position.
-function populateInfoWindow(marker, infowindow) {
+function populateInfoWindow(marker, infowindow, placeLocation) {
     // Check to make sure the infowindow is not already opened on this marker.    
     if (infowindow.marker != marker) {
         // Clear the infowindow content to give the streetview time to load.
@@ -105,7 +105,7 @@ function populateInfoWindow(marker, infowindow) {
         });
 
 
-        requestFourSquare(marker);
+        requestFourSquare(placeLocation);
 
         var streetViewService = new google.maps.StreetViewService();
         var radius = 50;
@@ -114,6 +114,8 @@ function populateInfoWindow(marker, infowindow) {
         // panorama from that and set the options
         function getStreetView(data, status) {
             if (status == google.maps.StreetViewStatus.OK) {
+
+                
                 var nearStreetViewLocation = data.location.latLng;
                 var heading = google.maps.geometry.spherical.computeHeading(
                     nearStreetViewLocation, marker.position);
@@ -136,32 +138,29 @@ function populateInfoWindow(marker, infowindow) {
         // Use streetview service to get the closest streetview image within
         // 50 meters of the markers position
         streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
+
         // Open the infowindow on the correct marker.
         infowindow.open(map, marker);
     }
 
-    
-    function requestFourSquare(marker) {
+
+    function requestFourSquare(placeLocation) {
         var fsObj = [];
-        console.log(marker);
-        var url = 'https://api.foursquare.com/v2/venues/search?ll=' + marker.position.lat + ',' + 
-        marker.position.lng + '&query=' + "restaurant" + '&radius=' + 300 + 
-        '&intent=browse&client_id=' + FOURSQRE_CLIENT_ID + '&client_secret=' + FOURSQRE_CLIENT_SECRET + '&v=20120304';
+        var url = 'https://api.foursquare.com/v2/venues/search?ll=' + placeLocation.position.lat + ',' +
+            placeLocation.position.lng + '&query=' + "restaurant" + '&radius=' + 300 +
+            '&intent=browse&client_id=' + FOURSQRE_CLIENT_ID + '&client_secret=' + FOURSQRE_CLIENT_SECRET + '&v=20180304';
+            
         $.getJSON(url, {}, function (data) {
-            venues = data['response']['groups'][0]['items'];
-            for (var i = 0; i < venues.length; i++) {
-                var fsRes = {
-                    'Id': venues[i]['venue']['id'],
-                    'Name': venues[i]['venue']['name'],
-                    'Latitude': venues[i]['venue']['location']['lat'],
-                    'Longitude': venues[i]['venue']['location']['lng'],
-                    'Type': type,
-                    'Vicinity': venues[i]['venue']['location']['address'],
-                    'Reference': "Foursquare"
-                };
-                fsObj.push(fsRes);
-            }
-            console.log(fsObj);
+            console.log(data);
+
+            var id = placeLocation.id; // data['response']['venues'][0]["id"];
+            
+            console.log(id);
+            var url = 'https://api.foursquare.com/v2/venues/' + id + '?client_id=' + FOURSQRE_CLIENT_ID + '&client_secret=' + FOURSQRE_CLIENT_SECRET + '&v=20180504';
+            console.log(url);
+            $.getJSON(url, {}, function (data) {
+                console.log(data.response.venue.rating);
+            });
         });
     }
 }
