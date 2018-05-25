@@ -1,11 +1,11 @@
 
 var initialPlaces = [
     { name: 'Cafe Kraft', position: { lat: 48.719280, lng: 9.128380 }, comment: "a sport place to got boulder, which also sells coffee", id:'4bcb01643740b71360a36165' },
-    { name: 'Schwabengarten', position: { lat: 48.70136, lng: 9.141701 }, comment: "playing Soccer or eat al kinds of swabian delicatess", id:'4bcb01643740b71360a36165' },
+    { name: 'Schwabengarten', position: { lat: 48.701376, lng: 9.141616 }, comment: "playing Soccer or eat al kinds of swabian delicatess", id:'4bcb01643740b71360a36165' },
 
-    { name: 'Udo Snack', position: { lat: 48.7761642, lng: 9.1740999 }, comment: "traditional street food style burger since 1849" },
-    { name: 'Fluxus', position: { lat: 48.77543, lng: 9.1728 }, comment: "probably a tax fraud, but nice atmosphere" },
-    { name: 'I LOVE SUSHI', position: { lat: 48.7784709, lng: 9.1564214 }, comment: "I know people how love Sushi so much" },
+    { name: 'Udo Snack', position: { lat: 48.7761642, lng: 9.1740999 }, comment: "traditional street food style burger since 1849", id: '4bab95d1f964a52064b63ae3' },
+    { name: 'Fluxus', position: { lat: 48.77543, lng: 9.1728 }, comment: "probably a tax fraud, but nice atmosphere", id:'56bdde5e498e098e1294c594' },
+    { name: 'I LOVE SUSHI', position: { lat: 48.7784709, lng: 9.1564214 }, comment: "I know people how love Sushi so much", id:'4b759cd6f964a5203d172ee3' },
 
     { name: 'Bella Napoli Feuerbach', position: { lat: 48.810060, lng: 9.163198 }, comment: "the italian restaurant to visit in stuttgart", id:'4b842c92f964a520832531e3' }
 ];
@@ -56,7 +56,7 @@ var octopus = function () {
         marker.setMap(map);
 
         marker.addListener('click', function () {
-            populateInfoWindow(this, largeInfowindow, placeLocation);
+            populateInfoWindow(this, largeInfowindow, placeLocation.id);
         });
 
         markers.push(placeLocation);
@@ -85,7 +85,7 @@ var octopus = function () {
     };
 
     self.showInfoWindow = function (data, event) {
-        populateInfoWindow(data.marker, largeInfowindow);
+        populateInfoWindow(data.marker, largeInfowindow, data.id);
     }
 }
 
@@ -93,7 +93,7 @@ var octopus = function () {
 // This function populates the infowindow when the marker is clicked. We'll only allow
 // one infowindow which will open at the marker that is clicked, and populate based
 // on that markers position.
-function populateInfoWindow(marker, infowindow, placeLocation) {
+function populateInfoWindow(marker, infowindow, id) {
     // Check to make sure the infowindow is not already opened on this marker.    
     if (infowindow.marker != marker) {
         // Clear the infowindow content to give the streetview time to load.
@@ -103,10 +103,8 @@ function populateInfoWindow(marker, infowindow, placeLocation) {
         infowindow.addListener('closeclick', function () {
             infowindow.marker = null;
         });
-
-
-        requestFourSquare(placeLocation);
-
+        
+        console.log(venue);
         var streetViewService = new google.maps.StreetViewService();
         var radius = 50;
         // In case the status is OK, which means the pano was found, compute the
@@ -114,12 +112,12 @@ function populateInfoWindow(marker, infowindow, placeLocation) {
         // panorama from that and set the options
         function getStreetView(data, status) {
             if (status == google.maps.StreetViewStatus.OK) {
-
+                
                 
                 var nearStreetViewLocation = data.location.latLng;
                 var heading = google.maps.geometry.spherical.computeHeading(
                     nearStreetViewLocation, marker.position);
-                infowindow.setContent('<div><strong>' + marker.title + '</strong></div><hr><div>' + marker.comment + '</div><hr><div id="pano"></div>');
+                infowindow.setContent('<div><strong>' + marker.title + '</strong></div><hr><div>' + marker.comment + '</div><hr><div>Rating: ' + requestFourSquare(id) + '</div><hr><div id="pano"></div>');
                 var panoramaOptions = {
                     position: nearStreetViewLocation,
                     pov: {
@@ -144,23 +142,14 @@ function populateInfoWindow(marker, infowindow, placeLocation) {
     }
 
 
-    function requestFourSquare(placeLocation) {
-        var fsObj = [];
-        var url = 'https://api.foursquare.com/v2/venues/search?ll=' + placeLocation.position.lat + ',' +
-            placeLocation.position.lng + '&query=' + "restaurant" + '&radius=' + 300 +
-            '&intent=browse&client_id=' + FOURSQRE_CLIENT_ID + '&client_secret=' + FOURSQRE_CLIENT_SECRET + '&v=20180304';
-            
+    function requestFourSquare(id) {
+        var url = 'https://api.foursquare.com/v2/venues/' + id + '?client_id=' + FOURSQRE_CLIENT_ID + '&client_secret=' + FOURSQRE_CLIENT_SECRET + '&v=20180504';
+        //console.log(url);
+        
         $.getJSON(url, {}, function (data) {
-            console.log(data);
-
-            var id = placeLocation.id; // data['response']['venues'][0]["id"];
-            
-            console.log(id);
-            var url = 'https://api.foursquare.com/v2/venues/' + id + '?client_id=' + FOURSQRE_CLIENT_ID + '&client_secret=' + FOURSQRE_CLIENT_SECRET + '&v=20180504';
-            console.log(url);
-            $.getJSON(url, {}, function (data) {
-                console.log(data.response.venue.rating);
-            });
+            console.log(data.response.venue);
+            return data.response.venue.rating;
         });
+        
     }
 }
