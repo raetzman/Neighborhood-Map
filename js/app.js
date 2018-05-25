@@ -138,32 +138,6 @@ function populateInfoWindow(marker, infowindow, id) {
 
     }
 
-<<<<<<< HEAD
-    
-    function requestFourSquare(marker) {
-        var fsObj = [];
-        
-        var url = 'https://api.foursquare.com/v2/venues/search?ll=' + marker.placeLocation.position.lat + "," +
-        marker.placeLocation.position.lng + '&query=' + marker.title + '&radius=' + 300 + 
-        '&intent=browse&client_id=' + FOURSQRE_CLIENT_ID + '&client_secret=' + FOURSQRE_CLIENT_SECRET + '&v=20120609';
-        console.log(url);
-        $.getJSON(url, {}, function (data) {
-            console.log(data);
-            venues = data['response']['groups'][0]['items'];
-            for (var i = 0; i < venues.length; i++) {
-                var fsRes = {
-                    'Id': venues[i]['venue']['id'],
-                    'Name': venues[i]['venue']['name'],
-                    'Latitude': venues[i]['venue']['location']['lat'],
-                    'Longitude': venues[i]['venue']['location']['lng'],
-                    'Type': type,
-                    'Vicinity': venues[i]['venue']['location']['address'],
-                    'Reference': "Foursquare"
-                };
-                fsObj.push(fsRes);
-            }
-            console.log(fsObj);
-=======
 
     function requestFourSquare(id) {
         var url = 'https://api.foursquare.com/v2/venues/' + id + '?client_id=' + FOURSQRE_CLIENT_ID + '&client_secret=' + FOURSQRE_CLIENT_SECRET + '&v=20180504';
@@ -172,7 +146,6 @@ function populateInfoWindow(marker, infowindow, id) {
         /*
         $.getJSON(url, {}, function (data) {
             innerdoc.getElementById('frsqrerating').value = "FourSquare Rating: " + data.response.venue.rating;
->>>>>>> rating_solved
         });
         */
         $.ajax({
