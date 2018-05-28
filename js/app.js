@@ -1,4 +1,3 @@
-
 var initialPlaces = [
     { name: 'Cafe Kraft', position: { lat: 48.719280, lng: 9.128380 }, comment: "a sporty place to go boulder, which also sells coffee", id: '4bcb01643740b71360a36165' },
     { name: 'Schwabengarten', position: { lat: 48.701376, lng: 9.141616 }, comment: "playing Soccer or eat al kinds of swabian delicatess", id: '4bcb01643740b71360a36165' },
@@ -12,6 +11,7 @@ var FOURSQRE_CLIENT_SECRET = 'UAMIKPK3GQO5KXGQBE5YIPKSZAKC5WOZN32WJMUZGYXJGRDU';
 var map;
 var markers = [];
 var largeInfowindow;
+var foursqareValues = [];
 
 // everything is better with cats
 //var icon;
@@ -23,6 +23,38 @@ function initMap() {
         zoom: 13
     });
     largeInfowindow = new google.maps.InfoWindow();
+    
+    var bounds = new google.maps.LatLngBounds();
+    initialPlaces.forEach(function (placeLocation) {
+        foursqareValues.push(placeLocation.id, requestFourSquare(placeLocation.id));
+        
+        var marker = new google.maps.Marker({
+            position: placeLocation.position,
+            title: placeLocation.name,
+            animation: google.maps.Animation.DROP,
+            comment: placeLocation.comment,
+            //icon: icon // the world is not ready for cat
+            id: placeLocation.id
+        });
+        
+        placeLocation.marker = marker;
+        marker.placeLocation = placeLocation;
+        marker.setMap(map);
+        
+        marker.addListener('click', function () {
+            
+            populateInfoWindow(marker, largeInfowindow);
+        });
+
+        markers.push(marker);
+
+        bounds.extend(placeLocation.position);
+
+    });
+
+
+    map.fitBounds(bounds);
+
     ko.applyBindings(octopus);
 }
 
@@ -30,62 +62,72 @@ function initMap() {
 
 var octopus = function () {
     var self = this;
-    self.placeList = ko.observableArray([]);
+    self.placeList = ko.observableArray();
     self.query = ko.observable('');
 
-    var bounds = new google.maps.LatLngBounds();
-    initialPlaces.forEach(function (placeLocation) {
-
-        var marker = new google.maps.Marker({
-            position: placeLocation.position,
-            title: placeLocation.name,
-            animation: google.maps.Animation.DROP,
-            comment: placeLocation.comment
-            //icon: icon // the world is not ready for cat
-        });
-        placeLocation.marker = marker;
-        marker.placeLocation = placeLocation;
-        marker.setMap(map);
-
-        marker.addListener('click', function () {
-            populateInfoWindow(this, largeInfowindow, placeLocation.id);
-        });
-
-        markers.push(placeLocation);
-        self.placeList.push(placeLocation);
-
-        bounds.extend(placeLocation.position);
-
-    });
-    map.fitBounds(bounds);
+    for (var i = 0; i < markers.length; i++) {
+        var marker = markers[i];
+        self.placeList.push(marker);
+        
+    }
     // everytime query/placeList changes, this gets computed again
     self.filterPlaces = function () {
-
+        console.log("Hallo");
         for (var i = 0; i < markers.length; i++) {
             var marker = markers[i];
-
-            if (marker.name.toLowerCase().indexOf(self.query().toLowerCase()) > -1) {
+            
+            if (marker.title.toLowerCase().indexOf(self.query().toLowerCase()) > -1) {
                 if (self.placeList.indexOf(marker) < 0) {
                     self.placeList.push(marker);
-                    marker.marker.setMap(map);
+                    marker.setMap(map);
                 }
             } else {
-                marker.marker.setMap(null);
+                marker.setMap(null);
                 self.placeList.remove(marker);
             }
         }
     };
 
     self.showInfoWindow = function (data, event) {
-        populateInfoWindow(data.marker, largeInfowindow, data.id);
-    }
+        populateInfoWindow(data, largeInfowindow);
+    };
+
+    self.doFourSqareLate = function () {
+        console.log("go");
+        self.markers.forEach(function (marker) {
+
+            var url = 'https://api.foursquare.com/v2/venues/' + marker.id + '?client_id=' + FOURSQRE_CLIENT_ID + '&client_secret=' + FOURSQRE_CLIENT_SECRET + '&v=20180504';
+            //console.log(url);
+            /* only works async*/
+            /*
+            $.getJSON(url, {}, function (data) {
+                innerdoc.getElementById('frsqrerating').value = "FourSquare Rating: " + data.response.venue.rating;
+            });
+            */
+            $.ajax({
+                type: 'GET',
+                url: url,
+                dataType: 'json',
+                success: function (data) {
+                    console.log(marker.rating);
+
+                    marker = data.response.venue;
+                },
+                error: function () {
+                    marker = undefined; // "No FourSquare Rating available!";
+                },
+                async: false
+            });
+
+        });
+    };
 }
 
 
 // This function populates the infowindow when the marker is clicked. We'll only allow
 // one infowindow which will open at the marker that is clicked, and populate based
 // on that markers position.
-function populateInfoWindow(marker, infowindow, id) {
+function populateInfoWindow(marker, infowindow) {
     // Check to make sure the infowindow is not already opened on this marker.    
     if (infowindow.marker != marker) {
         // Clear the infowindow content to give the streetview time to load.
@@ -95,7 +137,7 @@ function populateInfoWindow(marker, infowindow, id) {
         infowindow.addListener('closeclick', function () {
             infowindow.marker = null;
         });
-        
+
 
         var streetViewService = new google.maps.StreetViewService();
         var radius = 50;
@@ -109,10 +151,10 @@ function populateInfoWindow(marker, infowindow, id) {
                 var nearStreetViewLocation = data.location.latLng;
                 var heading = google.maps.geometry.spherical.computeHeading(
                     nearStreetViewLocation, marker.position);
-                // its undefined, when the following lines are calle, so its never displayed
-                var rating = requestFourSquare(id);
-                infowindow.setContent('<div><strong>' + marker.title + '</strong></div><hr><div>' + marker.comment +
-                    '</div><hr><div></div><hr><div id="pano"></div>');
+                console.log(foursqareValues);
+                infowindow.setContent('<div><strong>' + marker.title + '</strong></div><hr><div>' + marker.comment
+                    + '</div><hr><div>Rating by Foursqare: ' + foursqareValues[marker.id] +
+                    '</div><hr><hr><div id="pano"></div>');
                 var panoramaOptions = {
                     position: nearStreetViewLocation,
                     pov: {
@@ -124,43 +166,48 @@ function populateInfoWindow(marker, infowindow, id) {
                     document.getElementById('pano'), panoramaOptions);
 
             } else {
-                infowindow.setContent('<div>' + marker.title + '</div>' +
-                    '<div>No Street View Found</div>');
+                infowindow.setContent('<div><strong>' + marker.title + '</strong></div><hr><div>' + marker.comment
+                + '</div><hr><div>Rating by Foursqare: ' + foursqareValues[marker.id] +
+                '</div><div>No Street View Found</div>');
             }
         }
 
         // Use streetview service to get the closest streetview image within
         // 50 meters of the markers position
-        streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
+        if(marker.position){
+            streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
+        }else{
+            streetViewService.getPanoramaByLocation(marker.marker.position, radius, getStreetView);
+        }
+        
 
         // Open the infowindow on the correct marker.
         infowindow.open(map, marker);
 
     }
+}
 
+function requestFourSquare(id) {
+    var url = 'https://api.foursquare.com/v2/venues/' + id + '?client_id=' + FOURSQRE_CLIENT_ID + '&client_secret=' + FOURSQRE_CLIENT_SECRET + '&v=20180504';
+    //console.log(url);
+    /* only works async*/
+    /*
+    $.getJSON(url, {}, function (data) {
+        innerdoc.getElementById('frsqrerating').value = "FourSquare Rating: " + data.response.venue.rating;
+    });
+    */
+    $.ajax({
+        type: 'GET',
+        url: url,
+        dataType: 'json',
+        success: function (data) {
+            console.log(data.response.venue.rating);
 
-    function requestFourSquare(id) {
-        var url = 'https://api.foursquare.com/v2/venues/' + id + '?client_id=' + FOURSQRE_CLIENT_ID + '&client_secret=' + FOURSQRE_CLIENT_SECRET + '&v=20180504';
-        //console.log(url);
-        /* only works async*/
-        /*
-        $.getJSON(url, {}, function (data) {
-            innerdoc.getElementById('frsqrerating').value = "FourSquare Rating: " + data.response.venue.rating;
-        });
-        */
-        $.ajax({
-            type: 'GET',
-            url: url,
-            dataType: 'json',
-            success: function (data) { 
-                console.log(data.response.venue.rating);
-
-                return "FourSquare Rating: " + data.response.venue.rating;
-            },
-            error: function(){
-                return "No FourSquare Rating available!";
-            },
-            async: false
-        });    
-    }
+            return data.response.venue;
+        },
+        error: function () {
+            return undefined;
+        },
+        async: true
+    });
 }
