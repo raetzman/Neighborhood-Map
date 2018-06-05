@@ -11,7 +11,6 @@ var FOURSQRE_CLIENT_SECRET = 'UAMIKPK3GQO5KXGQBE5YIPKSZAKC5WOZN32WJMUZGYXJGRDU';
 var map;
 var markers = [];
 var largeInfowindow;
-var foursqareValues = [];
 
 // everything is better with cats
 //var icon;
@@ -23,11 +22,12 @@ function initMap() {
         zoom: 13
     });
     largeInfowindow = new google.maps.InfoWindow();
-    
+
     var bounds = new google.maps.LatLngBounds();
+    
     initialPlaces.forEach(function (placeLocation) {
-        foursqareValues.push(placeLocation.id, requestFourSquare(placeLocation.id));
-        
+        var venue = "";
+
         var marker = new google.maps.Marker({
             position: placeLocation.position,
             title: placeLocation.name,
@@ -36,13 +36,26 @@ function initMap() {
             //icon: icon // the world is not ready for cat
             id: placeLocation.id
         });
-        
+        var url = 'https://api.foursquare.com/v2/venues/' + placeLocation.id + '?client_id=' + FOURSQRE_CLIENT_ID + '&client_secret=' + FOURSQRE_CLIENT_SECRET + '&v=20180504';
+        $.ajax({
+            type: 'GET',
+            url: url,
+            dataType: 'json',
+            async: true,
+            success: function (data) {
+                marker.venue = data.response.venue;
+            },
+            error: function (data) {
+                console.log(data);
+                marker.venue = undefined;
+            }
+        });
         placeLocation.marker = marker;
         marker.placeLocation = placeLocation;
         marker.setMap(map);
-        
+
         marker.addListener('click', function () {
-            
+
             populateInfoWindow(marker, largeInfowindow);
         });
 
@@ -68,14 +81,14 @@ var octopus = function () {
     for (var i = 0; i < markers.length; i++) {
         var marker = markers[i];
         self.placeList.push(marker);
-        
+
     }
     // everytime query/placeList changes, this gets computed again
     self.filterPlaces = function () {
         console.log("Hallo");
         for (var i = 0; i < markers.length; i++) {
             var marker = markers[i];
-            
+
             if (marker.title.toLowerCase().indexOf(self.query().toLowerCase()) > -1) {
                 if (self.placeList.indexOf(marker) < 0) {
                     self.placeList.push(marker);
@@ -127,7 +140,7 @@ var octopus = function () {
 // This function populates the infowindow when the marker is clicked. We'll only allow
 // one infowindow which will open at the marker that is clicked, and populate based
 // on that markers position.
-function populateInfoWindow(marker, infowindow) {
+function populateInfoWindow(marker, infowindow, rating) {
     // Check to make sure the infowindow is not already opened on this marker.    
     if (infowindow.marker != marker) {
         // Clear the infowindow content to give the streetview time to load.
@@ -138,6 +151,27 @@ function populateInfoWindow(marker, infowindow) {
             infowindow.marker = null;
         });
 
+        var content_part_1 = "";
+        var content_part_url = "";
+        var content_part_photo = "";
+
+        console.log(marker.venue);
+        if (marker.venue) {
+            content_part_1 = '<h1>' + marker.venue.name + '</h1><hr><div>Mauntzi says: ' + marker.comment
+                + '</div><hr><div>Rating by Foursqare: ' + marker.venue.rating+ '</div>';
+
+                if (marker.venue.url) {
+                    content_part_url = '<hr><a href='+ marker.venue.url + '>' + marker.venue.name + '</a>';
+                }
+                
+                if (marker.venue.bestPhoto) {
+                    content_part_photo = '<hr><img alt="Image of the restaurant from Foursquare" height="42" width="42" src="' 
+                    + marker.venue.bestPhoto.suffix + marker.venue.bestPhoto.suffix + '">';
+                }
+            } else {
+            content_part_1 = '<h1>' + marker.title + '</h1><hr><div>' + marker.comment + '</div><hr><div>no foursqare-data available</div>';
+        }
+       
 
         var streetViewService = new google.maps.StreetViewService();
         var radius = 50;
@@ -147,14 +181,12 @@ function populateInfoWindow(marker, infowindow) {
         async function getStreetView(data, status) {
             if (status == google.maps.StreetViewStatus.OK) {
 
-
                 var nearStreetViewLocation = data.location.latLng;
                 var heading = google.maps.geometry.spherical.computeHeading(
                     nearStreetViewLocation, marker.position);
-                console.log(foursqareValues);
-                infowindow.setContent('<div><strong>' + marker.title + '</strong></div><hr><div>' + marker.comment
-                    + '</div><hr><div>Rating by Foursqare: ' + foursqareValues[marker.id] +
-                    '</div><hr><hr><div id="pano"></div>');
+
+                infowindow.setContent(content_part_1 +
+                    '<hr><div id="pano"></div>');
                 var panoramaOptions = {
                     position: nearStreetViewLocation,
                     pov: {
@@ -166,48 +198,21 @@ function populateInfoWindow(marker, infowindow) {
                     document.getElementById('pano'), panoramaOptions);
 
             } else {
-                infowindow.setContent('<div><strong>' + marker.title + '</strong></div><hr><div>' + marker.comment
-                + '</div><hr><div>Rating by Foursqare: ' + foursqareValues[marker.id] +
-                '</div><div>No Street View Found</div>');
+                infowindow.setContent(content_part_1 + '<hr><div>No Street View Found</div>');
             }
         }
 
         // Use streetview service to get the closest streetview image within
         // 50 meters of the markers position
-        if(marker.position){
+        if (marker.position) {
             streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
-        }else{
+        } else {
             streetViewService.getPanoramaByLocation(marker.marker.position, radius, getStreetView);
         }
-        
+
 
         // Open the infowindow on the correct marker.
         infowindow.open(map, marker);
 
     }
-}
-
-function requestFourSquare(id) {
-    var url = 'https://api.foursquare.com/v2/venues/' + id + '?client_id=' + FOURSQRE_CLIENT_ID + '&client_secret=' + FOURSQRE_CLIENT_SECRET + '&v=20180504';
-    //console.log(url);
-    /* only works async*/
-    /*
-    $.getJSON(url, {}, function (data) {
-        innerdoc.getElementById('frsqrerating').value = "FourSquare Rating: " + data.response.venue.rating;
-    });
-    */
-    $.ajax({
-        type: 'GET',
-        url: url,
-        dataType: 'json',
-        success: function (data) {
-            console.log(data.response.venue.rating);
-
-            return data.response.venue;
-        },
-        error: function () {
-            return undefined;
-        },
-        async: true
-    });
 }
