@@ -10,7 +10,6 @@ https://www.udacity.com/course/google-maps-apis--ud864
 
 # This project uses Foursqare API
 enabling foursquare in your project you need to 
-###Example
 * visit https://developer.foursquare.com/docs/api/getting-started
 * Setup Your Developer Account
 * Register as a Developer
