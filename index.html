@@ -15,33 +15,34 @@
   <header>
 
   </header>
-  <div class="container">
+  <h1>Mauntzi's Restaurant Guide</h1>
+
+  <div class="container-fluid">
     <div class="row">
-      <div class="col-sm-3 no-float">
+      <div class="col-sm-3">
         <input type="text" placeholder="Search.." class='input_shrink' data-bind="textInput: query, event: {keyup: filterPlaces}">
         <ul data-bind="foreach:placeList">
           <li data-bind="click: showInfoWindow">
-            <!-- I just want to show off and dont like it anymore-->
-            <!--<span data-bind="text: (1 + $index())"> </span>#-->
-            <!-- databinding to name better in strong-->
             <strong data-bind="text: title"> </strong>
           </li>
         </ul>
       </div>
-      <div class="col-sm-9 no-float">
-        <h2>Mauntzi's Restaurant Guide</h2>
+      <div class="col-sm-9">
         <div id="map"></div>
       </div>
     </div>
+    <footer>&copy;Mauntzi's Restaurant Guide</footer>
   </div>
 
+
+  <script src="js/constants.js"></script>
+  <script src="js/googlemaps.js"></script>
   <script src="js/app.js"></script>
   <!-- imoprt jQuery-->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <!-- Latest compiled and minified JavaScript version of bootstrap-->
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
     crossorigin="anonymous"></script>
-
   <script async defer src="https://maps.googleapis.com/maps/api/js?libraries=places,geometry,drawing&key=AIzaSyDIawTE_HUDqGNIoGhtrlheiBvQ75vIYEw&v=3&callback=initMap">
   </script>
 </body>

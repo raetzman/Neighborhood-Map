@@ -1,22 +1,18 @@
-
-
-html,body,.container {
+html,body {
   height:100%;
 }
-.container {
-  display:table;
-  width: 100%;  
+
+.container-fluid {
+  /*display:table;*/ 
+  width: 100%; 
   box-sizing: border-box;
+  height: 100%;
 }
 
 .row {
-  height: 100%;
-  
-}
-
-.row .no-float {
   display: table-cell;
   float: none;
+  height: 80%;
 }
 
 footer{
@@ -24,17 +20,19 @@ footer{
 }
 
 .input_shrink{
-  width: 80%;
+  /*width: 80%;*/
+  margin: 1.5em;
 }
 
 ul {
   list-style-type: none;
-  padding: 0.5em;  
+  border: 1.5em;  
 }
 
 li{
-  padding: 1em 0em 0.5em 0em;  
+  padding: 1.5em 0em 0.5em 0em;  
 }
+
 #pano {
   width: 40%;
   min-width: 15em;
@@ -42,8 +40,10 @@ li{
   min-height: 15em;
 }
 
-
-
 #map {
-  height: 90%;
+  height: 100%;
+}
+
+h1 {
+  text-align: center;
 }
