@@ -25,6 +25,6 @@ enabling foursquare in your project you need to
 * responsive features
 
 # This project uses knockout
-* binding expression for <ul> list elements was generated
-* filterable funciton
-
+* binding expression for list elements was generated
+* filterable list items
+visit: http://knockoutjs.com/documentation/introduction.html
