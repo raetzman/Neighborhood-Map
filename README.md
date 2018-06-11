@@ -1,7 +1,10 @@
 # Neighborhood-Map
 Neighborhood Map for Udacity
+you can test the project here:
 
 https://raetzman.github.io/Neighborhood-Map/
+
+or you clone the repository and open index.html in your favorite browser
 
 # This project uses Google Maps API
 thanks for support from Udacity in cooperation with Google Maps - other examples using google Maps API can be found here

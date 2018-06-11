@@ -38,6 +38,12 @@ var ViewModelOctopus = function () {
     self.showInfoWindow = function (data, event) {
         populateInfoWindow(data, largeInfowindow);
     };
+    self.enableHighlight = function(data, event){
+        changetoHighlightIcon(data);
+    };
+    self.disableHighlight = function(data, event){
+        changetoDefaultIcon(data);
+    };
 }
 
 
