@@ -44,6 +44,4 @@ var ViewModelOctopus = function () {
     self.disableHighlight = function(data, event){
         changetoDefaultIcon(data);
     };
-}
-
-
+};

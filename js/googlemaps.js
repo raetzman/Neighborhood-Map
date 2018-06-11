@@ -20,9 +20,6 @@ function initMap() {
 
     initialPlaces.forEach(function (placeLocation) {
 
-        // venue will hold all info from foursquare
-        var venue = '';
-
         var marker = new google.maps.Marker({
             position: placeLocation.position,
             title: placeLocation.name,
@@ -80,9 +77,9 @@ function initMap() {
 // on that markers position.
 function populateInfoWindow(marker, infowindow) {
     // only chance I see is to deactivate all markers, because there is more then one way to get here and close the window again
-    markers.forEach(othermarker => {
-        othermarker.setAnimation(null);
-    });
+    for(var i = 0; i < markers.length; i++) {
+        markers[i].setAnimation(null);
+    }
     // Check to make sure the infowindow is not already opened on this marker.    
     if (infowindow.marker != marker) {
         marker.setAnimation(google.maps.Animation.BOUNCE);
