@@ -3,6 +3,8 @@ var defaultIcon, highlightedIcon;
 
 // this is the first funciton to be triggered
 function initMap() {
+    var min_size = Math.min($(window).width(), $(document).height()) / 3;
+    console.log(min_size);
     // Style the markers a bit. This will be our listing marker icon.
     defaultIcon = makeMarkerIcon('FFFFFF');
     // Create a "highlighted location" marker color for when the user
@@ -14,7 +16,7 @@ function initMap() {
         center: { lat: 48.7758459, lng: 9.182932100000016 },
         zoom: 13
     });
-    largeInfowindow = new google.maps.InfoWindow();
+    largeInfowindow = new google.maps.InfoWindow({maxWidth: min_size, maxHeight: min_size});
 
     var bounds = new google.maps.LatLngBounds();
 
@@ -97,17 +99,17 @@ function populateInfoWindow(marker, infowindow) {
         var content_part_photo = "";
 
         if (marker.venue) {
-            content_part_1 = '<h1>' + marker.venue.name + '</h1><hr><div>Mauntzi says: ' + marker.comment  + '</div><hr><div>Rating by Foursqare: ' + marker.venue.rating + '</div>';
+            content_part_1 = '<h1 class="scale_h1">' + marker.venue.name + '</h1><div class="scale">Mauntzi says: ' + marker.comment  + '</div><hr><div>Rating by Foursqare: ' + marker.venue.rating + '</div>';
 
             if (marker.venue.url) {
-                content_part_url = '<hr><a href=' + marker.venue.url + '>' + marker.venue.name + '</a>';
+                content_part_url = '<hr><a class="scale" href=' + marker.venue.url + '>' + marker.venue.name + '</a>';
             }
 
             if (marker.venue.bestPhoto) {
                 content_part_photo = '<hr><img alt="Image of the restaurant from Foursquare" height="42" width="42" src="' + marker.venue.bestPhoto.suffix + marker.venue.bestPhoto.suffix + '">';
             }
         } else {
-            content_part_1 = '<h1>' + marker.title + '</h1><hr><div>' + marker.comment + '</div><hr><div>no foursqare-data available</div>';
+            content_part_1 = '<h1 class="scale_h1">' + marker.title + '</h1><div class="scale">' + marker.comment + '</div><hr><div class="scale">no foursqare-data available</div>';
         }
 
 
@@ -133,11 +135,10 @@ function populateInfoWindow(marker, infowindow) {
                         pitch: 30
                     }
                 };
-                var panorama = new google.maps.StreetViewPanorama(
-                    document.getElementById('pano'), panoramaOptions);
+                var panorama = new google.maps.StreetViewPanorama(document.getElementById('pano'), panoramaOptions);
 
             } else {
-                infowindow.setContent(content_part_1 + '<hr><div>No Street View Found</div>');
+                infowindow.setContent(content_part_1 + '<hr><div class="scale">No Street View Found</div>');
             }
         }
 

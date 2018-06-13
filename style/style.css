@@ -10,7 +10,7 @@ html,body {
 }
 
 .row {
-  display: table-cell;
+  /*display: table-cell;*/
   float: none;
   height: 80%;
 }
@@ -21,29 +21,46 @@ footer{
 
 .input_shrink{
   /*width: 80%;*/
-  margin: 1.5em;
+  margin: 0.5em 0em 0.5em 0em; 
+  font-size:2vw;
 }
 
 ul {
   list-style-type: none;
-  border: 1.5em;  
+  border: 1.5vw;  
+  padding: 0.5em 0em 0.0em 0em;  
 }
 
 li{
-  padding: 1.5em 0em 0.5em 0em;  
+  padding: 1.0em 0em 0.5em 0em;  
+  font-size:2vw;
 }
 
 #pano {
-  width: 40%;
+  width: 45%;
   min-width: 15em;
-  height: 40%;
-  min-height: 15em;
+  height: 30%;
+  min-height: 10em;
 }
 
 #map {
-  height: 100%;
+  position: absolute;
+  top: 0.1em;
+  left: 0.5em;
+  right: 0.3em;
+  bottom:0.1em;
+  z-index: 2em;
+  width: 95%;
+  background: gray;
 }
 
-h1 {
+.scale_h1 {
   text-align: center;
+  font-size:1.6vw !important;
 }
+
+.gm-style-iw {
+  font-size:1.3vw !important;
+}
+
+hr { margin: 0.6em  !important; }

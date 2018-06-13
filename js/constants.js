@@ -10,7 +10,7 @@ var initialPlaces =[
        id:"4bcb01643740b71360a36165"
     },
     {  
-       name:"Schwabengarten",
+       name:"Schwaben Garten",
        position:{  
           lat:48.701376,
           lng:9.141616
@@ -53,6 +53,15 @@ var initialPlaces =[
        },
        comment:"the italian restaurant to visit in stuttgart",
        id:"4b842c92f964a520832531e3"
+    },
+    {  
+       name:"Origami",
+       position:{
+          lat:48.770383716556736,
+          lng:9.175838894292026
+       },
+       comment:"the Origami restaurant to visit in stuttgart",
+       id:"5283676c498e1a9fc212fa46"
     }
  ];
 

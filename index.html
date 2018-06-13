@@ -16,11 +16,10 @@
   <header>
 
   </header>
-  <h1>Mauntzi's Restaurant Guide</h1>
-
   <div class="container-fluid">
     <div class="row">
       <div class="col-sm-3">
+          
         <input type="text" placeholder="Search.." class='input_shrink' data-bind="textInput: query, event: {keyup: filterPlaces}">
         <ul data-bind="foreach:placeList">
           <li data-bind=" event: {click: showInfoWindow, mouseover: enableHighlight, mouseout: disableHighlight }">
