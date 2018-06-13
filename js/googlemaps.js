@@ -3,8 +3,9 @@ var defaultIcon, highlightedIcon;
 
 // this is the first funciton to be triggered
 function initMap() {
+    // make the size of the infoWindow adaptbale 
     var min_size = Math.min($(window).width(), $(document).height()) / 3;
-    console.log(min_size);
+
     // Style the markers a bit. This will be our listing marker icon.
     defaultIcon = makeMarkerIcon('FFFFFF');
     // Create a "highlighted location" marker color for when the user
